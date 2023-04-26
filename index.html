@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+
+  <script>
+    function SubmitData(
+      xhr,
+      InformationType,
+      OperationType,
+      Arguments,
+      CallBackFunction
+    ) {
+      var fdata = new FormData();
+      var Token = localStorage.getItem("Token");
+      if (!Token) Token = "";
+      fdata.append("Token", Token);
+      fdata.append("OperationType", OperationType);
+      fdata.append("InformationType", InformationType);
+      fdata.append("LanguageType", localStorage.getItem("LanguageType"));
+      fdata.append("Arguments", Arguments);
+
+      if (xhr != null) {
+        var url = GetApiUrl();
+        xhr.open("post", url, true);
+        // xhr.setRequestHeader("Origin", "https://www.overseetracking.com");
+        xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xhr.onreadystatechange = CallBackFunction;
+        xhr.send(fdata);
+      }
+    }
+
+    function CreateXhr() {
+      var xhr = null;
+      if (window.XMLHttpRequest) xhr = new XMLHttpRequest();
+      else if (window.ActiveXObject)
+        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+      return xhr;
+    }
+
+    function SignInByUserName() {
+      var xhr = CreateXhr();
+      var Arguments = "{'UserName': ‘nipco-trucks’,'Password':' Riverside@11'}";
+      SubmitData(xhr, "User", "SignIn", Arguments, function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            try {
+              var res = JSON.parse(xhr.responseText);
+              if (res.State == 0) {
+                localStorage.setItem("Token", res.Token);
+                localStorage.setItem("UserConfig", JSON.stringify(res.Data));
+                sessionStorage.setItem("logintoken", res.Token);
+              }
+            } catch (e) {}
+          }
+        }
+      });
+    }
+
+    function GetApiUrl() {
+      return "https://api.overseetracking.com:9090/WebProcessorApi.ashx";
+    }
+    console.log(SignInByUserName());
+  </script>
+</html>
