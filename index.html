@@ -28,7 +28,7 @@
       if (xhr != null) {
         var url = GetApiUrl();
         xhr.open("post", url, true);
-        // xhr.setRequestHeader("Origin", "https://www.overseetracking.com");
+        xhr.setRequestHeader("Origin", "https://www.overseetracking.com");
         xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
         xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.onreadystatechange = CallBackFunction;
